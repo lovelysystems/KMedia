@@ -11,8 +11,6 @@ import androidx.media3.session.SessionResult
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import io.github.moonggae.kmedia.custom.MediaCustomLayoutHandler
-import io.github.moonggae.kmedia.custom.MediaCustomLayoutHandler.Companion.customCommandRepeat
-import io.github.moonggae.kmedia.custom.MediaCustomLayoutHandler.Companion.customCommandShuffle
 import kotlinx.coroutines.CoroutineScope
 
 @OptIn(UnstableApi::class)
@@ -29,8 +27,6 @@ internal class LibrarySessionCallback(
 
     override fun onConnect(session: MediaSession, controller: MediaSession.ControllerInfo): MediaSession.ConnectionResult {
         val sessionCommands = MediaSession.ConnectionResult.DEFAULT_SESSION_AND_LIBRARY_COMMANDS.buildUpon()
-            .add(customCommandRepeat)
-            .add(customCommandShuffle)
             .remove(SessionCommand.COMMAND_CODE_SESSION_SET_RATING)
             .remove(SessionCommand.COMMAND_CODE_LIBRARY_SUBSCRIBE)
             .remove(SessionCommand.COMMAND_CODE_LIBRARY_UNSUBSCRIBE)
