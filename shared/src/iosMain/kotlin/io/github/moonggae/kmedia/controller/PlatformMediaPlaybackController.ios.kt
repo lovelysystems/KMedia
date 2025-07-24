@@ -310,12 +310,7 @@ internal class PlatformMediaPlaybackController(
     }
 
     override fun replaceMusic(index: Int, music: Music) {
-        val wasCurrentPlaying = playlistManager.currentIndex == index
         playlistManager.replaceMusic(index, music)
-        
-        if (wasCurrentPlaying) {
-            setMusic(music, playerStateManager.currentPlaybackStatus == PlayingStatus.PLAYING)
-        }
         updatePlaybackState()
     }
 
