@@ -17,6 +17,10 @@ import io.github.moonggae.kmedia.listener.PlaybackAnalyticsEventListener
 import io.github.moonggae.kmedia.listener.PlaybackIOHandler
 import io.github.moonggae.kmedia.listener.PlaybackStateHandler
 
+object MediaConstants {
+    const val ACTION_OPEN_MAIN_APP_UI = "io.github.moonggae.kmedia.session.ACTION_OPEN_MAIN_APP_UI"
+}
+
 @OptIn(UnstableApi::class)
 class PlaybackService : MediaLibraryService() {
     private var player: ExoPlayer? = null
@@ -35,7 +39,6 @@ class PlaybackService : MediaLibraryService() {
     private val playbackAnalyticsEventListener: PlaybackAnalyticsEventListener by IsolatedKoinContext.koin.inject()
     private val customLayoutUpdateListener: CustomLayoutUpdateListener by IsolatedKoinContext.koin.inject()
     private val sessionCallback: LibrarySessionCallback by IsolatedKoinContext.koin.inject()
-//    private val sessionActivity: PendingIntent by IsolatedKoinContext.koin.inject()
 
     private fun createPlayer(): ExoPlayer {
         val audioAttributes = AudioAttributes.Builder()
@@ -65,9 +68,24 @@ class PlaybackService : MediaLibraryService() {
 
     override fun onCreate() {
         super.onCreate()
+        this.setShowNotificationForIdlePlayer(SHOW_NOTIFICATION_FOR_IDLE_PLAYER_NEVER)
+        val activityIntent = Intent(MediaConstants.ACTION_OPEN_MAIN_APP_UI).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            setPackage(applicationContext.packageName)
+        }
+
+        val pendingIntentFlags = PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+
+        val sessionActivityPendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            activityIntent,
+            pendingIntentFlags
+        )
         session = MediaLibrarySession
             .Builder(this, player!!, sessionCallback)
-//            .setSessionActivity(sessionActivity)
+            // Setting the activity for the session allows the notification to open the app's main UI
+            .setSessionActivity(sessionActivityPendingIntent)
             .build()
 
         player?.let {
@@ -84,7 +102,9 @@ class PlaybackService : MediaLibraryService() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         session.player.pause()
         session.player.stop()
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+        session.release()
         super.onTaskRemoved(rootIntent)
     }
 

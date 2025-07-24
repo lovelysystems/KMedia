@@ -1,6 +1,5 @@
 package io.github.moonggae.kmedia.controller.controlcenter
 
-import platform.MediaPlayer.MPChangePlaybackPositionCommandEvent
 import platform.MediaPlayer.MPRemoteCommandCenter
 import platform.MediaPlayer.MPRemoteCommandHandlerStatusSuccess
 
@@ -31,35 +30,10 @@ internal class MediaCommandCenter(
             commandHandler.onPause()
             MPRemoteCommandHandlerStatusSuccess
         }
-
-        // Next Track Command
-        commandCenter.nextTrackCommand.enabled = true
-        commandCenter.nextTrackCommand.addTargetWithHandler { _ ->
-            commandHandler.onNext()
-            MPRemoteCommandHandlerStatusSuccess
-        }
-
-        // Previous Track Command
-        commandCenter.previousTrackCommand.enabled = true
-        commandCenter.previousTrackCommand.addTargetWithHandler { _ ->
-            commandHandler.onPrevious()
-            MPRemoteCommandHandlerStatusSuccess
-        }
-
-        // Seek Command
-        commandCenter.changePlaybackPositionCommand.enabled = true
-        commandCenter.changePlaybackPositionCommand.addTargetWithHandler { event ->
-            val positionMs = ((event as MPChangePlaybackPositionCommandEvent).positionTime * 1000).toLong()
-            commandHandler.onSeek(positionMs)
-            MPRemoteCommandHandlerStatusSuccess
-        }
     }
 
     fun cleanup() {
         commandCenter.playCommand.removeTarget(null)
         commandCenter.pauseCommand.removeTarget(null)
-        commandCenter.nextTrackCommand.removeTarget(null)
-        commandCenter.previousTrackCommand.removeTarget(null)
-        commandCenter.changePlaybackPositionCommand.removeTarget(null)
     }
 }
