@@ -48,17 +48,17 @@ internal class MediaInfoCenter(
         if (isNewMusic(music.id, nowPlayingInfo)) {
             nowPlayingInfo.apply {
                 put(MPMediaItemPropertyPersistentID, music.id.hashCode())
-                music.coverUrl?.let {
-                    setArtwork(it)
-                }
-                put(MPMediaItemPropertyTitle, music.title)
-                put(MPMediaItemPropertyArtist, music.artist)
                 put(MPNowPlayingInfoPropertyDefaultPlaybackRate, 1.0f)
             }
         }
 
         // 항상 업데이트해야 하는 시간 정보
         nowPlayingInfo.apply {
+            music.coverUrl?.let {
+                setArtwork(it)
+            }
+            put(MPMediaItemPropertyTitle, music.title)
+            put(MPMediaItemPropertyArtist, music.artist)
             put(MPMediaItemPropertyPlaybackDuration, playbackState.duration / 1000.0)
             put(MPNowPlayingInfoPropertyElapsedPlaybackTime, playbackState.position / 1000.0)
             put(MPNowPlayingInfoPropertyPlaybackRate, player.rate)
