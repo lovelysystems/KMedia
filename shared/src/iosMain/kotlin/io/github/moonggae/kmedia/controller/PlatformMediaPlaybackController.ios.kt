@@ -68,7 +68,7 @@ internal class PlatformMediaPlaybackController(
     private var initialized = false
 
     override fun prepare(musics: List<Music>, index: Int, positionMs: Long) {
-        if (initialized == false) {
+        if (!initialized) {
             initController()
         }
 
@@ -78,7 +78,7 @@ internal class PlatformMediaPlaybackController(
     }
 
     override fun playMusics(musics: List<Music>, startIndex: Int) {
-        if (initialized == false) {
+        if (!initialized) {
             initController()
         }
 
@@ -287,6 +287,7 @@ internal class PlatformMediaPlaybackController(
         playlistManager.clear()
         eventManager.stopObserving()
         controlCenterManager.release()
+        audioSessionManager.destroyAudioSession()
         initialized = false
     }
 
