@@ -102,7 +102,9 @@ class PlaybackService : MediaLibraryService() {
     override fun onTaskRemoved(rootIntent: Intent?) {
         session.player.pause()
         session.player.stop()
+        stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
+        session.release()
         super.onTaskRemoved(rootIntent)
     }
 
