@@ -9,7 +9,6 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import platform.AVFoundation.AVPlayer
-import platform.AVFoundation.rate
 import platform.CoreGraphics.CGSizeMake
 import platform.Foundation.NSData
 import platform.Foundation.NSURL
@@ -18,11 +17,9 @@ import platform.MediaPlayer.MPMediaItemArtwork
 import platform.MediaPlayer.MPMediaItemPropertyArtist
 import platform.MediaPlayer.MPMediaItemPropertyArtwork
 import platform.MediaPlayer.MPMediaItemPropertyPersistentID
-import platform.MediaPlayer.MPMediaItemPropertyPlaybackDuration
 import platform.MediaPlayer.MPMediaItemPropertyTitle
 import platform.MediaPlayer.MPNowPlayingInfoCenter
 import platform.MediaPlayer.MPNowPlayingInfoPropertyDefaultPlaybackRate
-import platform.MediaPlayer.MPNowPlayingInfoPropertyElapsedPlaybackTime
 import platform.MediaPlayer.MPNowPlayingInfoPropertyIsLiveStream
 import platform.MediaPlayer.MPNowPlayingInfoPropertyPlaybackRate
 import platform.UIKit.UIImage
@@ -36,7 +33,7 @@ internal class MediaInfoCenter(
 
     fun setupInitInfo() {
         nowPlayingInfoCenter.nowPlayingInfo = mutableMapOf<Any?, Any?>().apply {
-            put(MPNowPlayingInfoPropertyIsLiveStream, false)
+            put(MPNowPlayingInfoPropertyIsLiveStream, true)
             put(MPNowPlayingInfoPropertyPlaybackRate, 1.0)
         }
     }
@@ -59,9 +56,6 @@ internal class MediaInfoCenter(
             }
             put(MPMediaItemPropertyTitle, music.title)
             put(MPMediaItemPropertyArtist, music.artist)
-            put(MPMediaItemPropertyPlaybackDuration, playbackState.duration / 1000.0)
-            put(MPNowPlayingInfoPropertyElapsedPlaybackTime, playbackState.position / 1000.0)
-            put(MPNowPlayingInfoPropertyPlaybackRate, player.rate)
         }
 
         nowPlayingInfoCenter.nowPlayingInfo = nowPlayingInfo
