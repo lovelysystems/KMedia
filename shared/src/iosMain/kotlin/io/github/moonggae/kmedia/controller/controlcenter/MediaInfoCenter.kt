@@ -53,7 +53,7 @@ internal class MediaInfoCenter(
         nowPlayingInfo.apply {
             music.coverUrl?.let {
                 setArtwork(it)
-            }
+            } ?: remove(MPMediaItemPropertyArtwork)
             put(MPMediaItemPropertyTitle, music.title)
             put(MPMediaItemPropertyArtist, music.artist)
         }
