@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
+import androidx.media3.common.C.WAKE_MODE_NETWORK
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
@@ -52,6 +53,7 @@ class PlaybackService : MediaLibraryService() {
         val builder = ExoPlayer.Builder(this, renderersFactory)
             .setAudioAttributes(audioAttributes, true)
             .setHandleAudioBecomingNoisy(true)
+            .setWakeMode(WAKE_MODE_NETWORK)
 
         if (cacheManager.enableCache) {
             cacheManager.getProgressiveMediaSourceFactory(applicationContext)?.let { mediaSourceFactory ->
