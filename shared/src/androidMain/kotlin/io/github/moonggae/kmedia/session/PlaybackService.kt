@@ -9,11 +9,10 @@ import androidx.media3.common.C.WAKE_MODE_NETWORK
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaSessionService
 import io.github.moonggae.kmedia.cache.CacheManager
 import io.github.moonggae.kmedia.di.IsolatedKoinContext
-import io.github.moonggae.kmedia.custom.CustomLayoutUpdateListener
 import io.github.moonggae.kmedia.listener.PlaybackAnalyticsEventListener
 import io.github.moonggae.kmedia.listener.PlaybackIOHandler
 import io.github.moonggae.kmedia.listener.PlaybackStateHandler
@@ -23,7 +22,7 @@ object MediaConstants {
 }
 
 @OptIn(UnstableApi::class)
-class PlaybackService : MediaLibraryService() {
+class PlaybackService : MediaSessionService() {
     private var player: ExoPlayer? = null
         get() {
             if (field == null || field?.isReleased == true) {
@@ -32,15 +31,12 @@ class PlaybackService : MediaLibraryService() {
             return field
         }
 
-    lateinit var session: MediaLibrarySession
+    lateinit var session: MediaSession
 
     private val cacheManager: CacheManager by IsolatedKoinContext.koin.inject()
     private val playbackStateHandler: PlaybackStateHandler by IsolatedKoinContext.koin.inject()
     private val playbackIOHandler: PlaybackIOHandler by IsolatedKoinContext.koin.inject()
     private val playbackAnalyticsEventListener: PlaybackAnalyticsEventListener by IsolatedKoinContext.koin.inject()
-    private val customLayoutUpdateListener: CustomLayoutUpdateListener by IsolatedKoinContext.koin.inject()
-    private val sessionCallback: LibrarySessionCallback by IsolatedKoinContext.koin.inject()
-
     private fun createPlayer(): ExoPlayer {
         val audioAttributes = AudioAttributes.Builder()
             .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
@@ -84,15 +80,11 @@ class PlaybackService : MediaLibraryService() {
             activityIntent,
             pendingIntentFlags
         )
-        session = MediaLibrarySession
-            .Builder(this, player!!, sessionCallback)
+        session = MediaSession
+            .Builder(this, player!!)
             // Setting the activity for the session allows the notification to open the app's main UI
             .setSessionActivity(sessionActivityPendingIntent)
             .build()
-
-        player?.let {
-            customLayoutUpdateListener.attachTo(session, it)
-        }
     }
 
     override fun onDestroy() {
@@ -110,5 +102,5 @@ class PlaybackService : MediaLibraryService() {
         super.onTaskRemoved(rootIntent)
     }
 
-    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaLibrarySession = session
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession = session
 }
